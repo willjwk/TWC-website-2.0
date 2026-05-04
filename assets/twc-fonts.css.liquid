@@ -1,0 +1,50 @@
+/*
+ * Self-hosted brand fonts. Mirrors app/styles/fontface.css from the
+ * sibling Hydrogen repo. The .liquid extension lets us route font URLs
+ * through the asset CDN via the asset_url filter.
+ */
+
+@font-face {
+  font-family: 'Euclid';
+  font-weight: 400;
+  font-style: normal;
+  src: url('{{ "EuclidCircularA-Regular-WebM.woff2" | asset_url }}') format('woff2'),
+       url('{{ "EuclidCircularA-Regular-WebM.woff" | asset_url }}') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid';
+  font-weight: 400;
+  font-style: italic;
+  src: url('{{ "EuclidCircularA-RegularItalic-WebM.woff2" | asset_url }}') format('woff2'),
+       url('{{ "EuclidCircularA-RegularItalic-WebM.woff" | asset_url }}') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid';
+  font-weight: 700;
+  font-style: normal;
+  src: url('{{ "EuclidCircularA-Bold-WebM.woff2" | asset_url }}') format('woff2'),
+       url('{{ "EuclidCircularA-Bold-WebM.woff" | asset_url }}') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid';
+  font-weight: 700;
+  font-style: italic;
+  src: url('{{ "EuclidCircularA-BoldItalic-WebM.woff2" | asset_url }}') format('woff2'),
+       url('{{ "EuclidCircularA-BoldItalic-WebM.woff" | asset_url }}') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Melia';
+  font-weight: 400;
+  font-style: normal;
+  src: url('{{ "melia.woff2" | asset_url }}') format('woff2'),
+       url('{{ "melia.woff" | asset_url }}') format('woff');
+  font-display: swap;
+}
