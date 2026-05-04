@@ -320,7 +320,16 @@
     </script>
   </head>
 
-  <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
+  {%- liquid
+    assign body_classes = 'gradient'
+    if settings.animations_hover_elements != 'none'
+      assign body_classes = body_classes | append: ' animate--hover-' | append: settings.animations_hover_elements
+    endif
+    if template.name == 'product' and product.metafields.custom.primary_colour.value != blank
+      assign body_classes = body_classes | append: ' twc-body--' | append: product.metafields.custom.primary_colour.value | downcase
+    endif
+  -%}
+  <body class="{{ body_classes }}">
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
