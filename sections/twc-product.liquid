@@ -1,0 +1,506 @@
+<script src="{{ 'twc-product.js' | asset_url }}" defer="defer"></script>
+
+{%- liquid
+  assign p = product
+  assign primary_colour = p.metafields.custom.primary_colour.value
+  assign hide_atc = p.metafields.custom.hide_add_to_cart.value
+  assign short_desc = p.metafields.custom.short_description.value
+  assign subtitle = p.metafields.custom.product_subtitle.value
+  assign cta_sticker = p.metafields.custom.cta_sticker
+  assign sticker_image = cta_sticker.value
+  assign jm_rating = p.metafields.custom.jmproductrating.value
+  assign jm_total = p.metafields.custom.jmtotalreviews.value
+  assign current_variant = p.selected_or_first_available_variant
+  assign valid_colours = 'Pink,Green,Purple,LightPink' | split: ','
+  assign has_gradient = false
+  if valid_colours contains primary_colour
+    assign has_gradient = true
+  endif
+-%}
+
+<div
+  class="twc-product"
+  data-section-id="{{ section.id }}"
+  data-product-handle="{{ p.handle }}"
+  data-hide-atc="{{ hide_atc | default: 'false' }}"
+  {%- if has_gradient %} style="background: var(--product-page-bg-{{ primary_colour }});"{% endif -%}
+>
+  <div class="twc-product__inner page-width">
+    <div class="twc-product__media">
+      {%- if current_variant.image -%}
+        {%- assign hero_image = current_variant.image -%}
+      {%- elsif p.featured_media -%}
+        {%- assign hero_image = p.featured_media.preview_image -%}
+      {%- endif -%}
+
+      {%- if hero_image -%}
+        <div class="twc-product__media-frame" data-product-image>
+          {{
+            hero_image
+            | image_url: width: 1500
+            | image_tag:
+              loading: 'eager',
+              fetchpriority: 'high',
+              class: 'twc-product__image',
+              widths: '320, 480, 720, 960, 1200, 1500',
+              sizes: '(min-width: 768px) 50vw, 100vw',
+              alt: hero_image.alt | default: p.title
+          }}
+        </div>
+      {%- else -%}
+        <div class="twc-product__media-frame twc-product__media-frame--placeholder" data-product-image>
+          {{ 'product-1' | placeholder_svg_tag: 'twc-product__image' }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="twc-product__content">
+      <div class="twc-product__judgeme" data-judgeme-slot>
+        {%- for block in section.blocks -%}
+          {%- if block.type == '@app' -%}
+            {% render block %}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- if jm_rating != blank or jm_total != blank -%}
+          <div class="twc-product__rating-fallback" aria-label="Customer rating">
+            {%- if jm_rating != blank -%}
+              <span class="twc-product__rating-avg">★ {{ jm_rating }}</span>
+            {%- endif -%}
+            {%- if jm_total != blank -%}
+              <span class="twc-product__rating-total">({{ jm_total }})</span>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <h1 class="twc-product__title">{{ p.title }}</h1>
+
+      <div class="twc-product__details">
+        {%- if short_desc != blank -%}
+          <p class="twc-product__short-description">{{ short_desc }}</p>
+        {%- endif -%}
+        <div class="twc-product__price" data-product-price>
+          {% render 'price', product: p, use_variant: true, show_compare_at_price: true %}
+        </div>
+      </div>
+
+      {%- if subtitle != blank -%}
+        <p class="twc-product__subtitle">{{ subtitle }}</p>
+      {%- endif -%}
+
+      {%- form 'product', p, class: 'twc-product__form', novalidate: 'novalidate' -%}
+        <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+
+        {%- for option in p.options_with_values -%}
+          {%- if option.values.size <= 1 -%}{% continue %}{%- endif -%}
+          <fieldset class="twc-product__option" data-option-position="{{ option.position }}">
+            <legend class="twc-product__option-name">{{ option.name }}</legend>
+            <div class="twc-product__option-values">
+              {%- for value in option.values -%}
+                {%- assign value_id = section.id | append: '-opt' | append: option.position | append: '-' | append: forloop.index -%}
+                <input
+                  type="radio"
+                  id="{{ value_id }}"
+                  class="twc-product__option-input"
+                  name="options[{{ option.name | escape }}]"
+                  value="{{ value | escape }}"
+                  {% if option.selected_value == value %}checked{% endif %}
+                  data-option-input
+                >
+                <label for="{{ value_id }}" class="twc-product__option-label">{{ value }}</label>
+              {%- endfor -%}
+            </div>
+          </fieldset>
+        {%- endfor -%}
+
+        {%- liquid
+          assign atc_disabled = false
+          assign atc_label = 'Add to cart'
+          if hide_atc == 'true'
+            assign atc_disabled = true
+            assign atc_label = 'Currently unavailable'
+          elsif current_variant.available == false
+            assign atc_disabled = true
+            assign atc_label = 'Sold out'
+          endif
+        -%}
+
+        <button
+          type="submit"
+          name="add"
+          class="button twc-product__atc"
+          data-product-atc
+          {% if atc_disabled %}disabled{% endif %}
+        >
+          <span data-atc-label>{{ atc_label }}</span>
+        </button>
+      {%- endform -%}
+
+      {%- assign accordion_block_count = 0 -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'accordion_tab' -%}
+          {%- assign accordion_block_count = accordion_block_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if accordion_block_count > 0 -%}
+        <div class="twc-product__accordion">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'accordion_tab' -%}
+              {%- assign mf_key = block.settings.metafield_key | strip -%}
+              {%- assign mf = p.metafields.custom[mf_key] -%}
+              {%- if mf != blank and mf.value != blank -%}
+                <details class="twc-accordion" {{ block.shopify_attributes }}>
+                  <summary class="twc-accordion__summary">
+                    <span class="twc-accordion__title">{{ block.settings.title }}</span>
+                    <span class="twc-accordion__icon" aria-hidden="true"></span>
+                  </summary>
+                  <div class="twc-accordion__body">
+                    {{ mf | metafield_tag }}
+                  </div>
+                </details>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if sticker_image != blank -%}
+        <div class="twc-product__sticker">
+          {{
+            sticker_image
+            | image_url: width: 600
+            | image_tag:
+              alt: p.title,
+              loading: 'lazy',
+              widths: '200, 400, 600',
+              sizes: '(min-width: 768px) 15vw, 50vw',
+              class: 'twc-product__sticker-image'
+          }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <script type="application/json" data-variants-json>
+    {{ p.variants | json }}
+  </script>
+</div>
+
+{% stylesheet %}
+.twc-product {
+  position: relative;
+  padding: var(--slice-margin) 0;
+}
+
+.twc-product__inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .twc-product__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+}
+
+.twc-product__media {
+  position: relative;
+}
+
+.twc-product__media-frame {
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.twc-product__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.twc-product__content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.twc-product__judgeme {
+  min-height: 1.5em;
+}
+
+.twc-product__rating-fallback {
+  font-size: 14px;
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.twc-product__title {
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.twc-product__details {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.twc-product__short-description {
+  margin: 0;
+  flex: 1 1 60%;
+}
+
+.twc-product__price {
+  flex: 0 0 auto;
+  font-weight: 700;
+}
+
+.twc-product__price .price__container {
+  font-size: 21px;
+}
+
+.twc-product__subtitle {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
+/* Variant picker */
+.twc-product__form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.twc-product__option {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.twc-product__option-name {
+  display: block;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+.twc-product__option-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.twc-product__option-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border-width: 0;
+}
+
+.twc-product__option-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid var(--black);
+  border-radius: var(--border-radius-lg);
+  background: transparent;
+  color: var(--black);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--twc-transition);
+  user-select: none;
+}
+
+.twc-product__option-label:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.twc-product__option-input:checked + .twc-product__option-label {
+  background: var(--black);
+  color: var(--white);
+}
+
+.twc-product__option-input:focus-visible + .twc-product__option-label {
+  outline: 2px solid var(--color-Green);
+  outline-offset: 2px;
+}
+
+/* ATC */
+.twc-product__atc {
+  width: 100%;
+  background: var(--white);
+  color: var(--black);
+  text-transform: uppercase;
+  padding: 1rem;
+  font-weight: 700;
+  border: 1px solid var(--black);
+  border-radius: var(--border-radius-lg);
+  cursor: pointer;
+  font-family: var(--twc-font-euclid);
+}
+
+.twc-product__atc:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Accordion */
+.twc-product__accordion {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--black);
+}
+
+.twc-accordion {
+  border-bottom: 1px solid var(--black);
+}
+
+.twc-accordion__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0.25rem;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+
+.twc-accordion__summary::-webkit-details-marker {
+  display: none;
+}
+
+.twc-accordion__icon {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.twc-accordion__icon::before,
+.twc-accordion__icon::after {
+  content: '';
+  position: absolute;
+  background: var(--black);
+  transition: transform 0.2s var(--ease-in-out-quad);
+}
+
+.twc-accordion__icon::before {
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+.twc-accordion__icon::after {
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+.twc-accordion[open] .twc-accordion__icon::after {
+  transform: translateX(-50%) scaleY(0);
+}
+
+.twc-accordion__body {
+  padding: 0 0.25rem 1rem;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.twc-accordion__body :first-child {
+  margin-top: 0;
+}
+
+.twc-accordion__body :last-child {
+  margin-bottom: 0;
+}
+
+/* Sticker */
+.twc-product__sticker {
+  margin-top: 0.5rem;
+}
+
+.twc-product__sticker-image {
+  display: block;
+  max-width: 200px;
+  height: auto;
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "TWC Product",
+  "tag": "section",
+  "class": "section-twc-product",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Per-product content comes from product metafields under the `custom` namespace. See twc-theme/CLAUDE.md for the full list."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "accordion_tab",
+      "name": "Accordion tab",
+      "limit": 8,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Tab title",
+          "default": "Benefits"
+        },
+        {
+          "type": "select",
+          "id": "metafield_key",
+          "label": "Source metafield (custom namespace)",
+          "options": [
+            { "value": "what_is_it_", "label": "what_is_it_ (Benefits)" },
+            { "value": "ingredients", "label": "ingredients" },
+            { "value": "how_to_use", "label": "how_to_use" },
+            { "value": "five_things_to_know", "label": "five_things_to_know" },
+            { "value": "shipping_and_returns", "label": "shipping_and_returns" }
+          ],
+          "default": "what_is_it_"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "accordion_tab", "settings": { "title": "BENEFITS", "metafield_key": "what_is_it_" } },
+      { "type": "accordion_tab", "settings": { "title": "INGREDIENTS", "metafield_key": "ingredients" } },
+      { "type": "accordion_tab", "settings": { "title": "HOW TO USE", "metafield_key": "how_to_use" } },
+      { "type": "accordion_tab", "settings": { "title": "5 THINGS TO KNOW", "metafield_key": "five_things_to_know" } },
+      { "type": "accordion_tab", "settings": { "title": "SHIPPING & RETURNS", "metafield_key": "shipping_and_returns" } }
+    ]
+  }
+}
+{% endschema %}
