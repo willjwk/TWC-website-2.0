@@ -49,10 +49,19 @@
   );
   --green-gradient: linear-gradient(90deg, var(--color-Green) 0%, #00833e 179.41%);
 
-  --product-page-bg-Green: linear-gradient(180deg, var(--color-Green) -36.97%, var(--white) 100%);
-  --product-page-bg-Purple: linear-gradient(180deg, var(--color-Purple) -36.97%, var(--white) 100%);
-  --product-page-bg-Pink: linear-gradient(180deg, var(--color-Pink) -36.97%, var(--white) 100%);
-  --product-page-bg-LightPink: linear-gradient(180deg, var(--color-LightPink) -36.97%, var(--white) 100%);
+  /*
+   * Product page bg: solid brand color edge-to-edge. The Hydrogen
+   * source defines these as gradients (#color → #f7f4ef cream), but
+   * because the live page is tall enough that the cream stop sits
+   * below the fold on most viewports, the result LOOKS solid. Our dev
+   * page is shorter so a literal copy of the gradient surfaces the
+   * cream fade. Solid colors match the visual intent without depending
+   * on page height.
+   */
+  --product-page-bg-Green: var(--color-Green);
+  --product-page-bg-Purple: var(--color-Purple);
+  --product-page-bg-Pink: var(--color-Pink);
+  --product-page-bg-LightPink: var(--color-LightPink);
 
   --reverse-gradient-Green: linear-gradient(180deg, var(--white) 0%, var(--color-Green) 100%);
   --reverse-gradient-Purple: linear-gradient(180deg, var(--white) 0%, var(--color-Purple) 100%);
