@@ -6,8 +6,10 @@
  * Required env:
  *   SHOPIFY_STORE  — e.g. "twc-v2-dev-store" (no .myshopify.com suffix)
  *   SHOPIFY_TOKEN  — Admin API access token from a custom app on the
- *                    store, with the `write_metaobject_definitions`
- *                    permission. Token starts with `shpat_`.
+ *                    store. Required scope: `write_products` (for
+ *                    product-owned metafield definitions; NOT
+ *                    `write_metaobject_definitions` which only covers
+ *                    metaobject types). Token starts with `shpat_`.
  *
  * Usage (PowerShell):
  *   $env:SHOPIFY_STORE = "twc-v2-dev-store"
