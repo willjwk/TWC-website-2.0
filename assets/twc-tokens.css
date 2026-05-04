@@ -120,10 +120,10 @@ body {
  * the entire page. Painting on body keeps the green continuous behind
  * the transparent header instead of stopping abruptly at the hero.
  */
-body.twc-body--green { background: var(--product-page-bg-Green); }
-body.twc-body--purple { background: var(--product-page-bg-Purple); }
-body.twc-body--pink { background: var(--product-page-bg-Pink); }
-body.twc-body--lightpink { background: var(--product-page-bg-LightPink); }
+body.twc-body--green { background: var(--product-page-bg-Green) !important; background-attachment: scroll !important; }
+body.twc-body--purple { background: var(--product-page-bg-Purple) !important; background-attachment: scroll !important; }
+body.twc-body--pink { background: var(--product-page-bg-Pink) !important; background-attachment: scroll !important; }
+body.twc-body--lightpink { background: var(--product-page-bg-LightPink) !important; background-attachment: scroll !important; }
 
 h1 {
   text-transform: uppercase;

@@ -257,16 +257,16 @@
 
     {%- style -%}
       :root {
-        --white: {{ settings.twc_color_cream }};
-        --black: {{ settings.twc_color_black }};
-        --color-Green: {{ settings.twc_color_green }};
-        --color-GreenSecondary: {{ settings.twc_color_green_secondary }};
-        --color-Purple: {{ settings.twc_color_purple }};
-        --color-PurpleSecondary: {{ settings.twc_color_purple_secondary }};
-        --color-Pink: {{ settings.twc_color_pink }};
-        --color-PinkSecondary: {{ settings.twc_color_pink_secondary }};
-        --color-LightPink: {{ settings.twc_color_lightpink }};
-        --color-LightPinkSecondary: {{ settings.twc_color_lightpink_secondary }};
+        --white: {{ settings.twc_color_cream | default: '#f7f4ef' }};
+        --black: {{ settings.twc_color_black | default: '#000000' }};
+        --color-Green: {{ settings.twc_color_green | default: '#00d163' }};
+        --color-GreenSecondary: {{ settings.twc_color_green_secondary | default: '#9dffcd' }};
+        --color-Purple: {{ settings.twc_color_purple | default: '#a2a2ff' }};
+        --color-PurpleSecondary: {{ settings.twc_color_purple_secondary | default: '#e2e2ff' }};
+        --color-Pink: {{ settings.twc_color_pink | default: '#ff6279' }};
+        --color-PinkSecondary: {{ settings.twc_color_pink_secondary | default: '#ffd0d7' }};
+        --color-LightPink: {{ settings.twc_color_lightpink | default: '#f27fb2' }};
+        --color-LightPinkSecondary: {{ settings.twc_color_lightpink_secondary | default: '#fbc3d2' }};
       }
     {%- endstyle -%}
 
