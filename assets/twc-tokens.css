@@ -49,10 +49,10 @@
   );
   --green-gradient: linear-gradient(90deg, var(--color-Green) 0%, #00833e 179.41%);
 
-  --product-page-bg-Green: linear-gradient(180deg, var(--color-Green) -36.97%, var(--white) 100%);
-  --product-page-bg-Purple: linear-gradient(180deg, var(--color-Purple) -36.97%, var(--white) 100%);
-  --product-page-bg-Pink: linear-gradient(180deg, var(--color-Pink) -36.97%, var(--white) 100%);
-  --product-page-bg-LightPink: linear-gradient(180deg, var(--color-LightPink) -36.97%, var(--white) 100%);
+  --product-page-bg-Green: var(--color-Green);
+  --product-page-bg-Purple: var(--color-Purple);
+  --product-page-bg-Pink: var(--color-Pink);
+  --product-page-bg-LightPink: var(--color-LightPink);
 
   --reverse-gradient-Green: linear-gradient(180deg, var(--white) 0%, var(--color-Green) 100%);
   --reverse-gradient-Purple: linear-gradient(180deg, var(--white) 0%, var(--color-Purple) 100%);
