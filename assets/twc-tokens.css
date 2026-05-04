@@ -50,18 +50,17 @@
   --green-gradient: linear-gradient(90deg, var(--color-Green) 0%, #00833e 179.41%);
 
   /*
-   * Product page bg: solid brand color edge-to-edge. The Hydrogen
-   * source defines these as gradients (#color → #f7f4ef cream), but
-   * because the live page is tall enough that the cream stop sits
-   * below the fold on most viewports, the result LOOKS solid. Our dev
-   * page is shorter so a literal copy of the gradient surfaces the
-   * cream fade. Solid colors match the visual intent without depending
-   * on page height.
+   * Product page bg: solid color matching the live site's *visible*
+   * green at the top of the viewport. Live uses
+   * `linear-gradient(180deg, #color -36.97%, #f7f4ef 100%)`, which at
+   * y=0 renders ≈27% blended toward cream — i.e. a noticeably lighter
+   * mint than the raw brand hex. We use the pre-computed top-of-mix
+   * value so the solid bg matches what users see on thewhatsupp.com.
    */
-  --product-page-bg-Green: var(--color-Green);
-  --product-page-bg-Purple: var(--color-Purple);
-  --product-page-bg-Pink: var(--color-Pink);
-  --product-page-bg-LightPink: var(--color-LightPink);
+  --product-page-bg-Green: #43da89;
+  --product-page-bg-Purple: #b9b8fb;
+  --product-page-bg-Pink: #fd8999;
+  --product-page-bg-LightPink: #f39fc2;
 
   --reverse-gradient-Green: linear-gradient(180deg, var(--white) 0%, var(--color-Green) 100%);
   --reverse-gradient-Purple: linear-gradient(180deg, var(--white) 0%, var(--color-Purple) 100%);
