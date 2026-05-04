@@ -138,7 +138,7 @@ const definitions = [
     namespace: 'custom',
     key: 'what_is_it_',
     description: 'Rich text — populates the BENEFITS accordion tab on the product hero.',
-    type: 'rich_text_field',
+    type: 'multi_line_text_field',
     ownerType: 'PRODUCT',
   },
   {
@@ -146,7 +146,7 @@ const definitions = [
     namespace: 'custom',
     key: 'ingredients',
     description: 'Rich text — populates the INGREDIENTS accordion tab on the product hero.',
-    type: 'rich_text_field',
+    type: 'multi_line_text_field',
     ownerType: 'PRODUCT',
   },
   {
@@ -154,7 +154,7 @@ const definitions = [
     namespace: 'custom',
     key: 'how_to_use',
     description: 'Rich text — populates the HOW TO USE accordion tab on the product hero.',
-    type: 'rich_text_field',
+    type: 'multi_line_text_field',
     ownerType: 'PRODUCT',
   },
   {
@@ -162,7 +162,7 @@ const definitions = [
     namespace: 'custom',
     key: 'five_things_to_know',
     description: 'Rich text — populates the 5 THINGS TO KNOW accordion tab on the product hero.',
-    type: 'rich_text_field',
+    type: 'multi_line_text_field',
     ownerType: 'PRODUCT',
   },
   {
@@ -170,7 +170,7 @@ const definitions = [
     namespace: 'custom',
     key: 'shipping_and_returns',
     description: 'Rich text — populates the SHIPPING & RETURNS accordion tab on the product hero.',
-    type: 'rich_text_field',
+    type: 'multi_line_text_field',
     ownerType: 'PRODUCT',
   },
 ];
