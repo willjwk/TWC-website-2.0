@@ -223,7 +223,7 @@
         <button
           type="submit"
           name="add"
-          class="button twc-product__atc"
+          class="twc-product__atc"
           data-product-atc
           {% if atc_disabled %}disabled{% endif %}
         >
@@ -446,6 +446,8 @@
 
 .twc-product__title {
   margin: 0;
+  font-family: var(--twc-font-melia);
+  font-weight: 400;
   text-transform: uppercase;
 }
 
@@ -595,8 +597,10 @@
 .twc-accordion__icon {
   position: relative;
   display: inline-block;
-  width: 18px;
-  height: 18px;
+  width: 28px;
+  height: 28px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
   flex: 0 0 auto;
 }
 
@@ -604,23 +608,23 @@
 .twc-accordion__icon::after {
   content: '';
   position: absolute;
-  background: var(--black);
+  background: currentColor;
   transition: transform 0.2s var(--ease-in-out-quad);
 }
 
 .twc-accordion__icon::before {
   top: 50%;
-  left: 0;
-  width: 100%;
+  left: 25%;
+  width: 50%;
   height: 2px;
   transform: translateY(-50%);
 }
 
 .twc-accordion__icon::after {
-  top: 0;
+  top: 25%;
   left: 50%;
   width: 2px;
-  height: 100%;
+  height: 50%;
   transform: translateX(-50%);
 }
 
