@@ -12,11 +12,6 @@
   assign jm_rating = p.metafields.custom.jmproductrating.value
   assign jm_total = p.metafields.custom.jmtotalreviews.value
   assign current_variant = p.selected_or_first_available_variant
-  assign valid_colours = 'Pink,Green,Purple,LightPink' | split: ','
-  assign has_gradient = false
-  if valid_colours contains primary_colour
-    assign has_gradient = true
-  endif
 -%}
 
 <div
