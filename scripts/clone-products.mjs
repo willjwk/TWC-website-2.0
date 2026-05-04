@@ -374,6 +374,31 @@ async function cloneOne(handle) {
     }
   }
 
+  // 7. Publish to Online Store. productCreate(status: ACTIVE) makes
+  //    the product Active in admin but does NOT publish it to any sales
+  //    channel — without this step the storefront returns 404. Using
+  //    REST since publishablePublish via GraphQL needs a separate
+  //    publication-id lookup that requires read_publications scope.
+  const numericId = devProduct.id.split('/').pop();
+  const pubRes = await fetch(
+    `https://${DEV_STORE}.myshopify.com/admin/api/${API_VERSION}/products/${numericId}.json`,
+    {
+      method: 'PUT',
+      headers: {
+        'X-Shopify-Access-Token': DEV_TOKEN,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        product: { id: Number(numericId), published: true, published_scope: 'web' },
+      }),
+    }
+  );
+  if (!pubRes.ok) {
+    console.error(`  ! publish failed (HTTP ${pubRes.status}) — product is Active but not on storefront`);
+  } else {
+    console.log(`  published`);
+  }
+
   console.log(`  ✓ done — preview: https://${DEV_STORE}.myshopify.com/products/${devProduct.handle}`);
   return true;
 }
