@@ -21,7 +21,7 @@
     var atc = form.querySelector('[data-product-atc]');
     var atcLabel = atc && atc.querySelector('[data-atc-label]');
     var priceContainer = root.querySelector('[data-product-price]');
-    var imageFrame = root.querySelector('[data-product-image]');
+    var mediaContainer = root.querySelector('[data-product-media]');
     var variantsJsonNode = root.querySelector('[data-variants-json]');
     var sectionId = root.dataset.sectionId;
     var productHandle = root.dataset.productHandle;
@@ -92,10 +92,11 @@
         priceContainer.replaceWith(newPrice);
         priceContainer = newPrice;
       }
-      var newImageFrame = doc.querySelector('[data-product-image]');
-      if (newImageFrame && imageFrame) {
-        imageFrame.replaceWith(newImageFrame);
-        imageFrame = newImageFrame;
+      var newMedia = doc.querySelector('[data-product-media]');
+      if (newMedia && mediaContainer) {
+        mediaContainer.replaceWith(newMedia);
+        mediaContainer = newMedia;
+        initMedia(root);
       }
     }
 
@@ -120,6 +121,66 @@
     form.addEventListener('change', function (e) {
       if (e.target && e.target.matches('[data-option-input]')) {
         onOptionChange();
+      }
+    });
+
+    initMedia(root);
+  }
+
+  /*
+   * initMedia — carousel + video autoplay enforcement for the product
+   * hero. Mirrors the video↔image carousel and `enforceMutedAndAutoPlay`
+   * helper from app/components/slices/SliceProductHero.tsx in the
+   * sibling Hydrogen repo. Idempotent: a `data-media-init` flag on the
+   * media element guards against double-binding when called repeatedly
+   * (e.g. after Section Rendering API replaces the media subtree).
+   */
+  function initMedia(root) {
+    var media = root.querySelector('[data-product-media]');
+    if (!media || media.dataset.mediaInit === '1') return;
+    media.dataset.mediaInit = '1';
+
+    var video = media.querySelector('[data-twc-video]');
+
+    function playVideo() {
+      if (!video) return;
+      video.muted = true;
+      video.defaultMuted = true;
+      var p = video.play();
+      if (p && typeof p.catch === 'function') p.catch(function () {});
+    }
+
+    playVideo();
+
+    if (media.dataset.canCarousel !== 'true') return;
+
+    function setSlide(name) {
+      media.dataset.currentSlide = name;
+      if (name === 'video') playVideo();
+    }
+    function next() {
+      setSlide(media.dataset.currentSlide === 'video' ? 'image' : 'video');
+    }
+    function prev() {
+      setSlide(media.dataset.currentSlide === 'image' ? 'video' : 'image');
+    }
+
+    media.addEventListener('click', function (e) {
+      if (e.target.closest('[data-media-prev]')) {
+        e.preventDefault();
+        prev();
+      } else if (e.target.closest('[data-media-next]')) {
+        e.preventDefault();
+        next();
+      }
+    });
+    media.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prev();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        next();
       }
     });
   }

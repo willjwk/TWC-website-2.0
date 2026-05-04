@@ -26,17 +26,111 @@
   {%- if has_gradient %} style="background: var(--product-page-bg-{{ primary_colour }});"{% endif -%}
 >
   <div class="twc-product__inner page-width">
-    <div class="twc-product__media">
-      {%- if current_variant.image -%}
-        {%- assign hero_image = current_variant.image -%}
-      {%- elsif p.featured_media -%}
-        {%- assign hero_image = p.featured_media.preview_image -%}
-      {%- endif -%}
+    {%- liquid
+      assign video_node = nil
+      for m in p.media
+        if m.media_type == 'video'
+          assign video_node = m
+          break
+        endif
+      endfor
+      assign portrait_image = p.images[1] | default: current_variant.image
+      if portrait_image == blank
+        assign portrait_image = p.featured_image
+      endif
+      assign bg_image = p.metafields.custom.product_background.value
+      assign has_video = false
+      if video_node
+        assign has_video = true
+      endif
+      assign has_bg = false
+      if bg_image != blank
+        assign has_bg = true
+      endif
+      assign can_carousel = false
+      if has_video and portrait_image != blank and has_bg
+        assign can_carousel = true
+      endif
+      assign initial_slide = 'image'
+      if has_video
+        assign initial_slide = 'video'
+      endif
+    -%}
 
-      {%- if hero_image -%}
-        <div class="twc-product__media-frame" data-product-image>
+    <div
+      class="twc-product__media{% if can_carousel %} twc-product__media--carousel{% endif %}"
+      data-product-media
+      {%- if can_carousel %} data-can-carousel="true" data-current-slide="{{ initial_slide }}" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Product media"{% endif -%}
+    >
+      {%- if can_carousel -%}
+        <div class="twc-product__media-bg" data-media-bg aria-hidden="true">
           {{
-            hero_image
+            bg_image
+            | image_url: width: 1500
+            | image_tag:
+              loading: 'eager',
+              class: 'twc-product__media-bg-image',
+              widths: '480, 720, 1024, 1500',
+              sizes: '(min-width: 768px) 50vw, 100vw',
+              alt: ''
+          }}
+        </div>
+        <div class="twc-product__media-stage">
+          <div class="twc-product__media-slide twc-product__media-slide--video" data-slide="video">
+            <video
+              class="twc-product__video"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              data-twc-video
+            >
+              {%- for source in video_node.sources -%}
+                <source src="{{ source.url }}" type="{{ source.mime_type }}">
+              {%- endfor -%}
+            </video>
+          </div>
+          <div class="twc-product__media-slide twc-product__media-slide--image" data-slide="image">
+            {{
+              portrait_image
+              | image_url: width: 1500
+              | image_tag:
+                loading: 'eager',
+                fetchpriority: 'high',
+                class: 'twc-product__image',
+                widths: '320, 480, 720, 960, 1200, 1500',
+                sizes: '(min-width: 768px) 50vw, 100vw',
+                alt: portrait_image.alt | default: p.title
+            }}
+          </div>
+        </div>
+        <button type="button" class="twc-product__media-arrow twc-product__media-arrow--prev" data-media-prev aria-label="Previous media">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <button type="button" class="twc-product__media-arrow twc-product__media-arrow--next" data-media-next aria-label="Next media">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8.59 16.59 13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+        </button>
+      {%- elsif has_video -%}
+        <div class="twc-product__media-frame">
+          <video
+            class="twc-product__video"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            data-twc-video
+          >
+            {%- for source in video_node.sources -%}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {%- endfor -%}
+          </video>
+        </div>
+      {%- elsif portrait_image != blank -%}
+        <div class="twc-product__media-frame">
+          {{
+            portrait_image
             | image_url: width: 1500
             | image_tag:
               loading: 'eager',
@@ -44,11 +138,11 @@
               class: 'twc-product__image',
               widths: '320, 480, 720, 960, 1200, 1500',
               sizes: '(min-width: 768px) 50vw, 100vw',
-              alt: hero_image.alt | default: p.title
+              alt: portrait_image.alt | default: p.title
           }}
         </div>
       {%- else -%}
-        <div class="twc-product__media-frame twc-product__media-frame--placeholder" data-product-image>
+        <div class="twc-product__media-frame twc-product__media-frame--placeholder">
           {{ 'product-1' | placeholder_svg_tag: 'twc-product__image' }}
         </div>
       {%- endif -%}
@@ -222,6 +316,115 @@
   width: 100%;
   height: auto;
   display: block;
+}
+
+/* Carousel: stacked slides + bg + arrows */
+.twc-product__media--carousel {
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .twc-product__media--carousel {
+    min-height: 70vh;
+  }
+}
+
+.twc-product__media--carousel:focus-visible {
+  outline: 2px solid var(--color-Green);
+  outline-offset: 2px;
+}
+
+.twc-product__media-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-in-out-quad);
+  pointer-events: none;
+}
+
+.twc-product__media[data-current-slide='image'] .twc-product__media-bg {
+  opacity: 1;
+}
+
+.twc-product__media-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.twc-product__media-stage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+}
+
+.twc-product__media-slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease-in-out-quad);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.twc-product__media[data-current-slide='video']
+  .twc-product__media-slide--video,
+.twc-product__media[data-current-slide='image']
+  .twc-product__media-slide--image {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.twc-product__video {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.twc-product__media-slide--image .twc-product__image {
+  max-width: 70%;
+}
+
+.twc-product__media-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--black);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--twc-transition);
+}
+
+.twc-product__media-arrow:hover {
+  background: var(--white);
+}
+
+.twc-product__media-arrow--prev {
+  left: 0.5rem;
+}
+
+.twc-product__media-arrow--next {
+  right: 0.5rem;
 }
 
 .twc-product__content {
