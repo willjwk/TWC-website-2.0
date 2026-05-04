@@ -8,6 +8,83 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
+    "name": "TWC Brand",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Brand palette. Drives gradients and section accents across the storefront."
+      },
+      {
+        "type": "header",
+        "content": "Neutrals"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_cream",
+        "label": "Cream (background / white)",
+        "default": "#f7f4ef"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_black",
+        "label": "Black (text)",
+        "default": "#000000"
+      },
+      {
+        "type": "header",
+        "content": "Primary"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_green",
+        "label": "Green",
+        "default": "#00d163"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_green_secondary",
+        "label": "Green secondary",
+        "default": "#9dffcd"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_purple",
+        "label": "Purple",
+        "default": "#a2a2ff"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_purple_secondary",
+        "label": "Purple secondary",
+        "default": "#e2e2ff"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_pink",
+        "label": "Pink",
+        "default": "#ff6279"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_pink_secondary",
+        "label": "Pink secondary",
+        "default": "#ffd0d7"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_lightpink",
+        "label": "Light pink",
+        "default": "#f27fb2"
+      },
+      {
+        "type": "color",
+        "id": "twc_color_lightpink_secondary",
+        "label": "Light pink secondary",
+        "default": "#fbc3d2"
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.logo.name",
     "settings": [
       {
