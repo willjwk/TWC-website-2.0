@@ -117,7 +117,7 @@
         {%- liquid
           assign atc_disabled = false
           assign atc_label = 'Add to cart'
-          if hide_atc == 'true'
+          if hide_atc
             assign atc_disabled = true
             assign atc_label = 'Currently unavailable'
           elsif current_variant.available == false
