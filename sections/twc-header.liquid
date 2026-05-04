@@ -1,0 +1,157 @@
+<header class="twc-header" role="banner">
+  <div class="twc-header__inner">
+    <a href="{{ routes.root_url }}" class="twc-header__logo" aria-label="{{ shop.name }}">
+      {%- if section.settings.logo != blank -%}
+        {%- assign logo = section.settings.logo -%}
+        {{
+          logo
+          | image_url: width: 320
+          | image_tag:
+            class: 'twc-header__logo-image',
+            widths: '160, 240, 320',
+            sizes: '(min-width: 768px) 100px, 70px',
+            alt: shop.name,
+            loading: 'eager'
+        }}
+      {%- elsif settings.logo != blank -%}
+        {%- assign logo = settings.logo -%}
+        {{
+          logo
+          | image_url: width: 320
+          | image_tag:
+            class: 'twc-header__logo-image',
+            widths: '160, 240, 320',
+            sizes: '(min-width: 768px) 100px, 70px',
+            alt: shop.name,
+            loading: 'eager'
+        }}
+      {%- else -%}
+        <span class="twc-header__logo-text">{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    <nav class="twc-header__nav" aria-label="Primary">
+      <ul class="twc-header__nav-list">
+        {%- for link in section.settings.menu.links -%}
+          <li class="twc-header__nav-item">
+            <a
+              href="{{ link.url }}"
+              class="twc-header__nav-link"
+              {% if link.current %}aria-current="page"{% endif %}
+            >
+              {{- link.title | upcase -}}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+{% stylesheet %}
+.twc-header {
+  position: relative;
+  z-index: var(--z-index-header);
+  background: transparent;
+}
+
+.twc-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem var(--container-padding);
+  max-width: var(--page-width, 1600px);
+  margin: 0 auto;
+}
+
+.twc-header__logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--black);
+  flex: 0 0 auto;
+}
+
+.twc-header__logo-image {
+  display: block;
+  height: auto;
+  width: 70px;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .twc-header__logo-image {
+    width: 100px;
+  }
+}
+
+.twc-header__logo-text {
+  font-family: var(--twc-font-melia);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--black);
+}
+
+.twc-header__nav {
+  flex: 0 0 auto;
+}
+
+.twc-header__nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+}
+
+.twc-header__nav-link {
+  font-family: var(--twc-font-euclid);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--black);
+  white-space: nowrap;
+}
+
+.twc-header__nav-link:hover,
+.twc-header__nav-link[aria-current='page'] {
+  text-decoration: underline;
+}
+
+@media (max-width: 749px) {
+  .twc-header__nav-list {
+    gap: 1rem;
+  }
+  .twc-header__nav-link {
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "TWC Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Header logo",
+      "info": "Overrides the global theme logo for this header. Recommended size: 200×200px."
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "Menu",
+      "info": "Configure menu items at Online Store → Navigation."
+    }
+  ]
+}
+{% endschema %}
