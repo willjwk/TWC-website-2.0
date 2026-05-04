@@ -50,6 +50,44 @@ Product-bound metafields stay as metafields and are surfaced via dynamic source 
 - `custom.hide_add_to_cart` — conditionally hide ATC
 - `custom.hide_product_page` — enforced via Shopify URL redirects per hidden product (Liquid has no clean runtime redirect)
 
+### Full product metafield list (custom namespace)
+
+Audited from `app/routes/($locale).products.$handle.jsx` PRODUCT_FRAGMENT. All in namespace `custom`.
+
+Hero (always-shown, scalar/file types):
+| Key | Shopify type | Purpose |
+|---|---|---|
+| `strapline` | single_line_text_field | (Reserved — used by SliceProducts cards) |
+| `short_description` | single_line_text_field | Below title, beside price |
+| `product_subtitle` | single_line_text_field | Below price |
+| `primary_colour` | single_line_text_field | One of: `Pink`, `Green`, `Purple`, `LightPink` — picks gradient via `--product-page-bg-{value}` |
+| `product_background` | file_reference (image) | Background image behind portrait image slide |
+| `cta_sticker` | file_reference (image) | Sticker rendered below ATC |
+| `hide_add_to_cart` | single_line_text_field | If string `"true"`, ATC is disabled |
+| `hide_product_page` | single_line_text_field | If string `"true"`, page redirects to `/` (Shopify URL redirect, not Liquid) |
+
+Hero accordion content (all rich_text_field, all optional — accordion entries are skipped when empty):
+| Key | Tab label |
+|---|---|
+| `what_is_it_` | BENEFITS |
+| `ingredients` | INGREDIENTS |
+| `how_to_use` | HOW TO USE |
+| `five_things_to_know` | 5 THINGS TO KNOW |
+| `shipping_and_returns` | SHIPPING & RETURNS |
+
+Judge.me (synced by Judge.me app via metafield sync):
+| Key | Shopify type | Purpose |
+|---|---|---|
+| `jmproductrating` | number_decimal | Avg rating |
+| `jmtotalreviews` | number_integer | Total reviews |
+| `latest_reviews` | json | Reviews payload (used by SliceReviews) |
+
+Post-hero metaobject references (drive sections beneath the hero — out of scope for Phase 3; live with their respective sections in Phase 4):
+- `benefits` → SliceCards
+- `tickertape` → SliceTickertape
+- `stickers` → SliceStickers
+- `related_products` → SliceProducts
+
 ## Cart specifics
 
 - AJAX cart drawer (Dawn ships one).
