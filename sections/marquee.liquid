@@ -1,0 +1,182 @@
+{%- liquid
+  assign bg = section.settings.bg_color | default: '#000000'
+  assign fg = section.settings.text_color | default: '#ffffff'
+  assign separator = section.settings.separator | default: '★'
+  assign speed = section.settings.speed | default: 30
+  assign link = section.settings.link
+  assign hide_on_mobile = section.settings.hide_on_mobile
+
+  comment
+    Mirrors SliceTickertape from app/components/slices/SliceTickertape.tsx
+    in the sibling Hydrogen repo. The phrases come from section blocks
+    (instead of the metaobject's list_of_phrases JSON array) so they can
+    be edited in the theme editor.
+  endcomment
+-%}
+
+{%- capture marquee_content -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'phrase' -%}
+      <span class="marquee__phrase" {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+      <span class="marquee__separator" aria-hidden="true">{{ separator }}</span>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if section.blocks.size > 0 -%}
+  {%- if link != blank -%}<a href="{{ link }}" class="marquee marquee--link{% if hide_on_mobile %} marquee--hide-mobile{% endif %}" style="--marquee-bg: {{ bg }}; --marquee-fg: {{ fg }}; --marquee-speed: {{ speed }}s;">
+  {%- else -%}<div class="marquee{% if hide_on_mobile %} marquee--hide-mobile{% endif %}" style="--marquee-bg: {{ bg }}; --marquee-fg: {{ fg }}; --marquee-speed: {{ speed }}s;">
+  {%- endif -%}
+    <div class="marquee__track" aria-hidden="false">{{ marquee_content }}</div>
+    <div class="marquee__track" aria-hidden="true">{{ marquee_content }}</div>
+  {%- if link != blank -%}</a>{%- else -%}</div>{%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+.marquee {
+  display: flex;
+  overflow: hidden;
+  background: var(--marquee-bg);
+  color: var(--marquee-fg);
+  text-decoration: none;
+  padding: 0.85rem 0;
+  font-family: var(--twc-font-euclid);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.marquee--hide-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .marquee {
+    font-size: 16px;
+    padding: 1rem 0;
+  }
+  .marquee--hide-mobile {
+    display: flex;
+  }
+}
+
+.marquee--link:hover {
+  text-decoration: none;
+}
+
+.marquee__track {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
+  animation: marquee-scroll var(--marquee-speed, 30s) linear infinite;
+  will-change: transform;
+}
+
+.marquee__phrase {
+  display: inline-block;
+}
+
+.marquee__separator {
+  display: inline-block;
+  opacity: 0.7;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    animation: none;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "TWC Marquee",
+  "tag": "section",
+  "class": "section-twc-marquee",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "label": "Separator",
+      "default": "★",
+      "info": "A character or short string rendered between phrases."
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Scroll duration (seconds)",
+      "min": 10,
+      "max": 120,
+      "step": 5,
+      "default": 30,
+      "info": "Lower = faster."
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link (optional)",
+      "info": "Wraps the whole bar in a link."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide on mobile",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "phrase",
+      "name": "Phrase",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Free global shipping"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      { "type": "phrase", "settings": { "text": "Free global shipping" } },
+      { "type": "phrase", "settings": { "text": "100% money back guarantee" } },
+      { "type": "phrase", "settings": { "text": "Vegan & cruelty-free" } },
+      { "type": "phrase", "settings": { "text": "Made with love" } }
+    ]
+  },
+  "presets": [
+    {
+      "name": "TWC Marquee",
+      "blocks": [
+        { "type": "phrase", "settings": { "text": "Free global shipping" } },
+        { "type": "phrase", "settings": { "text": "100% money back guarantee" } },
+        { "type": "phrase", "settings": { "text": "Vegan & cruelty-free" } },
+        { "type": "phrase", "settings": { "text": "Made with love" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

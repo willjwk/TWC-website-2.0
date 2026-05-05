@@ -47,7 +47,23 @@
         "shipping"
       ],
       "settings": {}
+    },
+    "marquee": {
+      "type": "marquee",
+      "blocks": {
+        "p1": { "type": "phrase", "settings": { "text": "Free global shipping" } },
+        "p2": { "type": "phrase", "settings": { "text": "100% money back guarantee" } },
+        "p3": { "type": "phrase", "settings": { "text": "Vegan & cruelty-free" } },
+        "p4": { "type": "phrase", "settings": { "text": "Made with love" } }
+      },
+      "block_order": ["p1", "p2", "p3", "p4"],
+      "settings": {
+        "bg_color": "#000000",
+        "text_color": "#ffffff",
+        "separator": "★",
+        "speed": 30
+      }
     }
   },
-  "order": ["main"]
+  "order": ["main", "marquee"]
 }
