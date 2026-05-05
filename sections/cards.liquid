@@ -1,0 +1,234 @@
+{%- liquid
+  assign show_title = section.settings.show_title
+  assign title = section.settings.title
+  assign bg_color = section.settings.bg_color | default: '#f7f4ef'
+  assign columns_desktop = section.settings.columns_desktop | default: 3
+-%}
+
+{%- if section.blocks.size > 0 -%}
+<section
+  class="twc-cards{% if show_title == false or title == blank %} twc-cards--no-title{% endif %}"
+  style="background: {{ bg_color }};"
+>
+  {%- if show_title and title != blank -%}
+    <div class="twc-cards__title">
+      <h2>{{ title }}</h2>
+    </div>
+  {%- endif -%}
+
+  <div class="twc-cards__grid twc-cards__grid--{{ columns_desktop }}">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'card' -%}
+        <article
+          class="twc-card"
+          style="--card-bg: {{ block.settings.accent_color | default: '#ffffff' }};"
+          {{ block.shopify_attributes }}
+        >
+          {%- if block.settings.image != blank -%}
+            <div class="twc-card__media">
+              {{
+                block.settings.image
+                | image_url: width: 700
+                | image_tag:
+                  loading: 'lazy',
+                  widths: '300, 500, 700',
+                  sizes: '(min-width: 768px) 30vw, 80vw',
+                  alt: block.settings.title | default: '',
+                  class: 'twc-card__image'
+              }}
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.title != blank -%}
+            <h3 class="twc-card__title">{{ block.settings.title }}</h3>
+          {%- endif -%}
+
+          {%- if block.settings.content != blank -%}
+            <div class="twc-card__content">{{ block.settings.content }}</div>
+          {%- endif -%}
+        </article>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+{%- endif -%}
+
+{% stylesheet %}
+.twc-cards {
+  padding: 3rem var(--container-padding);
+}
+
+.twc-cards__title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.twc-cards__title h2 {
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.twc-cards__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  max-width: var(--page-width, 1600px);
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .twc-cards__grid {
+    gap: 1.5rem;
+  }
+  .twc-cards__grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .twc-cards__grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .twc-cards__grid--4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+.twc-card {
+  background: var(--card-bg);
+  color: var(--black);
+  border-radius: var(--border-radius-sm);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+}
+
+.twc-card__media {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.twc-card__image {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  border-radius: var(--border-radius-sm);
+}
+
+.twc-card__title {
+  margin: 0;
+  text-transform: uppercase;
+  font-family: var(--twc-font-melia);
+  font-weight: 400;
+}
+
+.twc-card__content {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.twc-card__content :first-child { margin-top: 0; }
+.twc-card__content :last-child { margin-bottom: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "TWC Cards",
+  "tag": "section",
+  "class": "section-twc-cards",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show section title",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "BENEFITS"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Section background",
+      "default": "#f7f4ef"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columns on desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Card title"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Description"
+        },
+        {
+          "type": "color",
+          "id": "accent_color",
+          "label": "Card background",
+          "default": "#ffffff"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "card",
+        "settings": {
+          "title": "Patch tech",
+          "content": "<p>Slow-release vitamins delivered through the skin — no swallowing, no fuss.</p>",
+          "accent_color": "#9dffcd"
+        }
+      },
+      {
+        "type": "card",
+        "settings": {
+          "title": "Vegan & natural",
+          "content": "<p>Plant-based ingredients. No nasties, no animal testing, ever.</p>",
+          "accent_color": "#e2e2ff"
+        }
+      },
+      {
+        "type": "card",
+        "settings": {
+          "title": "Money-back guarantee",
+          "content": "<p>If you don't feel the difference within 30 days, we'll refund you. Simple.</p>",
+          "accent_color": "#ffd0d7"
+        }
+      }
+    ]
+  },
+  "presets": [
+    {
+      "name": "TWC Cards",
+      "blocks": [
+        { "type": "card", "settings": { "title": "Card one", "accent_color": "#9dffcd" } },
+        { "type": "card", "settings": { "title": "Card two", "accent_color": "#e2e2ff" } },
+        { "type": "card", "settings": { "title": "Card three", "accent_color": "#ffd0d7" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

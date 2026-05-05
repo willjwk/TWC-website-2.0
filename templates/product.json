@@ -63,7 +63,43 @@
         "separator": "★",
         "speed": 30
       }
+    },
+    "benefits": {
+      "type": "cards",
+      "blocks": {
+        "c1": {
+          "type": "card",
+          "settings": {
+            "title": "Patch tech",
+            "content": "<p>Slow-release vitamins delivered through the skin — no swallowing, no fuss.</p>",
+            "accent_color": "#9dffcd"
+          }
+        },
+        "c2": {
+          "type": "card",
+          "settings": {
+            "title": "Vegan & natural",
+            "content": "<p>Plant-based ingredients. No nasties, no animal testing, ever.</p>",
+            "accent_color": "#e2e2ff"
+          }
+        },
+        "c3": {
+          "type": "card",
+          "settings": {
+            "title": "Money-back guarantee",
+            "content": "<p>If you don't feel the difference within 30 days, we'll refund you. Simple.</p>",
+            "accent_color": "#ffd0d7"
+          }
+        }
+      },
+      "block_order": ["c1", "c2", "c3"],
+      "settings": {
+        "show_title": true,
+        "title": "BENEFITS",
+        "bg_color": "#f7f4ef",
+        "columns_desktop": 3
+      }
     }
   },
-  "order": ["main", "marquee"]
+  "order": ["main", "marquee", "benefits"]
 }
